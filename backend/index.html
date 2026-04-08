@@ -1,0 +1,1684 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SINI ORCHESTRATOR · SOVEREIGN LAB · R.R.G.</title>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@400;600;700;800&family=Libre+Baskerville:ital@1&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#030c1a;
+  --paper:#050f20;
+  --surface:#08172e;
+  --line:rgba(0,180,230,0.12);
+  --line2:rgba(0,180,230,0.05);
+  --blue:#00b4e6;
+  --blue2:#00d4ff;
+  --gold:#f0b429;
+  --gold2:#ffd166;
+  --amber:#ff9f1c;
+  --white:#d6e8f5;
+  --dim:#3a6080;
+  --green:#2de89f;
+  --red:#ff4561;
+  --border:rgba(0,180,230,0.18);
+  --surface2:rgba(0,180,230,0.04);
+}
+
+html{scroll-behavior:smooth}
+body{
+  font-family:'DM Mono',monospace;
+  background:var(--ink);
+  color:var(--white);
+  overflow-x:hidden;
+}
+
+/* BLUEPRINT GRID */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:
+    linear-gradient(var(--line2) 1px,transparent 1px),
+    linear-gradient(90deg,var(--line2) 1px,transparent 1px),
+    linear-gradient(var(--line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:8px 8px,8px 8px,40px 40px,40px 40px;
+  pointer-events:none;z-index:0;opacity:.5;
+}
+
+/* SCAN LINE EFFECT */
+body::after{
+  content:'';
+  position:fixed;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);
+  pointer-events:none;z-index:0;
+}
+
+/* NAV */
+nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(3,12,26,0.94);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:0 40px;
+  display:flex;align-items:center;height:52px;
+  gap:0;
+}
+.nav-logo{
+  font-family:'Anton',sans-serif;
+  font-size:1rem;letter-spacing:.18em;
+  color:var(--gold);
+  margin-right:auto;
+  text-shadow:0 0 20px rgba(240,180,41,.5);
+  display:flex;align-items:center;gap:10px;
+}
+.nav-logo-sini{
+  font-size:.55rem;letter-spacing:.2em;
+  color:var(--blue);
+  border:1px solid var(--border);
+  padding:2px 8px;
+}
+.nav-tabs{display:flex;height:100%}
+.nav-tab{
+  font-family:'DM Mono',monospace;
+  font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;
+  padding:0 16px;
+  border:none;background:transparent;
+  color:var(--dim);cursor:pointer;
+  border-bottom:2px solid transparent;
+  transition:all .2s;
+  height:100%;display:flex;align-items:center;
+}
+.nav-tab:hover,.nav-tab.active{color:var(--blue);border-bottom-color:var(--blue)}
+.nav-status{
+  display:flex;align-items:center;gap:6px;
+  font-size:.45rem;letter-spacing:.12em;
+  color:var(--green);
+  padding:4px 12px;
+  border:1px solid rgba(45,232,159,.2);
+  margin-left:16px;
+}
+.nav-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:blink 1.5s infinite}
+
+/* SECTIONS */
+.section{
+  position:relative;z-index:1;
+  padding:80px 60px;
+}
+.section-tag{
+  font-size:.52rem;letter-spacing:.2em;
+  color:var(--blue);text-transform:uppercase;
+  display:flex;align-items:center;gap:10px;
+  margin-bottom:12px;
+}
+.section-tag::before{content:'';width:24px;height:1px;background:var(--blue)}
+h2{
+  font-family:'Anton',sans-serif;
+  font-size:clamp(2rem,4vw,3.5rem);
+  letter-spacing:.05em;line-height:1;margin-bottom:8px;
+}
+.accent-g{color:var(--gold)}
+.accent-b{color:var(--blue2)}
+.section-sub{
+  font-size:.72rem;color:var(--dim);
+  line-height:1.8;max-width:580px;
+  margin-bottom:52px;font-style:italic;
+}
+
+/* HERO */
+.hero{
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  justify-content:center;
+  padding:100px 60px 60px;
+  position:relative;overflow:hidden;
+}
+canvas#hero-canvas{
+  position:absolute;inset:0;
+  pointer-events:none;z-index:0;
+}
+.hero-content{position:relative;z-index:2}
+.hero-eyebrow{
+  font-size:.58rem;letter-spacing:.28em;
+  color:var(--blue);text-transform:uppercase;
+  margin-bottom:20px;
+  display:flex;align-items:center;gap:12px;
+}
+.eyebrow-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 10px var(--green);
+  animation:blink 1.5s infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+.hero-h1{
+  font-family:'Anton',sans-serif;
+  font-size:clamp(3.5rem,9vw,9rem);
+  letter-spacing:.03em;line-height:.9;
+  margin-bottom:20px;
+}
+.hero-h1 .line1{color:var(--white)}
+.hero-h1 .line2{
+  color:transparent;
+  -webkit-text-stroke:1px var(--blue);
+  text-shadow:0 0 60px rgba(0,180,230,.25);
+}
+.hero-h1 .line3{color:var(--gold)}
+.hero-h1 .line4{
+  font-size:clamp(1rem,2.5vw,2.2rem);
+  color:var(--blue2);
+  letter-spacing:.3em;
+  display:block;
+  margin-top:8px;
+}
+
+.hero-founder{
+  font-family:'Libre Baskerville',serif;
+  font-style:italic;
+  font-size:1.1rem;
+  color:rgba(240,180,41,.55);
+  margin-bottom:28px;
+  letter-spacing:.05em;
+}
+
+/* SINI ID BADGE */
+.sini-badge{
+  display:inline-flex;align-items:center;gap:16px;
+  border:1px solid var(--border);
+  padding:10px 20px;
+  margin-bottom:28px;
+  background:rgba(0,180,230,.03);
+  font-size:.52rem;letter-spacing:.15em;
+}
+.sini-badge-label{color:var(--dim)}
+.sini-badge-val{color:var(--blue2)}
+.sini-badge-sep{color:var(--border);font-size:.8rem}
+
+.hero-id-block{
+  display:flex;gap:32px;flex-wrap:wrap;
+  margin-bottom:44px;
+}
+.id-item{
+  font-size:.52rem;letter-spacing:.1em;color:var(--dim);
+  line-height:2.2;
+  border-bottom:1px solid var(--border);
+  padding-bottom:6px;
+}
+.id-item span{color:var(--white);display:block;font-size:.68rem}
+
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap}
+.btn-p{
+  font-family:'DM Mono',monospace;
+  font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;
+  padding:13px 30px;
+  background:var(--gold);color:var(--ink);
+  border:none;cursor:pointer;
+  clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);
+  transition:all .25s;text-decoration:none;display:inline-block;font-weight:600;
+}
+.btn-p:hover{background:var(--gold2);transform:translateY(-2px);box-shadow:0 8px 30px rgba(240,180,41,.3)}
+.btn-s{
+  font-family:'DM Mono',monospace;
+  font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;
+  padding:13px 30px;
+  background:transparent;
+  border:1px solid var(--blue);
+  color:var(--blue);cursor:pointer;
+  transition:all .25s;text-decoration:none;display:inline-block;
+}
+.btn-s:hover{background:rgba(0,180,230,.08);box-shadow:0 0 20px rgba(0,180,230,.15)}
+
+/* INVERSE ALGEBRA SECTION */
+.algebra-section{
+  background:rgba(3,8,20,.9);
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+}
+.algebra-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:40px;
+  margin-top:52px;
+}
+.algebra-panel{
+  border:1px solid var(--border);
+  background:var(--surface);
+  padding:28px;
+  position:relative;
+  overflow:hidden;
+}
+.algebra-panel::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--blue),transparent);
+}
+.algebra-title{
+  font-family:'Syne',sans-serif;
+  font-size:.7rem;font-weight:700;
+  color:var(--blue2);
+  letter-spacing:.15em;text-transform:uppercase;
+  margin-bottom:20px;
+  display:flex;align-items:center;gap:8px;
+}
+.algebra-title::before{
+  content:'';width:8px;height:8px;
+  border:1px solid var(--blue);
+  transform:rotate(45deg);flex-shrink:0;
+}
+.math-display{
+  font-family:'DM Mono',monospace;
+  font-size:.7rem;
+  line-height:2.4;
+  color:var(--gold2);
+  padding:20px;
+  background:rgba(0,0,0,.3);
+  border:1px solid rgba(240,180,41,.1);
+  margin-bottom:16px;
+  position:relative;
+}
+.math-display .m-comment{color:var(--dim);font-size:.58rem}
+.math-display .m-var{color:var(--blue2)}
+.math-display .m-op{color:var(--amber)}
+.math-display .m-val{color:var(--green)}
+.math-display .m-key{color:var(--gold)}
+
+canvas#matrix-canvas{
+  width:100%;height:200px;
+  display:block;
+  border:1px solid var(--border);
+  background:rgba(3,8,20,.8);
+}
+
+.tensor-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-top:20px;
+}
+.tensor-cell{
+  border:1px solid var(--border);
+  padding:10px;
+  text-align:center;
+  font-size:.6rem;
+  background:rgba(0,180,230,.03);
+  transition:all .3s;
+  cursor:default;
+  position:relative;
+}
+.tensor-cell:hover{
+  background:rgba(0,180,230,.08);
+  border-color:var(--blue);
+}
+.tensor-cell .tc-label{color:var(--dim);font-size:.45rem;letter-spacing:.1em;display:block;margin-bottom:4px}
+.tensor-cell .tc-val{color:var(--gold2)}
+.tensor-cell .tc-sub{color:var(--blue2);font-size:.45rem;margin-top:2px;display:block}
+
+.inverse-chain{
+  display:flex;align-items:center;gap:0;
+  margin-top:20px;
+  overflow-x:auto;
+  padding-bottom:4px;
+}
+.chain-node{
+  flex-shrink:0;
+  padding:10px 14px;
+  background:rgba(0,180,230,.05);
+  border:1px solid var(--border);
+  font-size:.5rem;letter-spacing:.08em;
+  text-align:center;
+  transition:all .2s;
+  cursor:default;
+}
+.chain-node:hover{background:rgba(0,180,230,.1);border-color:var(--blue)}
+.chain-node .cn-id{color:var(--blue2);font-size:.55rem;display:block;margin-bottom:3px}
+.chain-node .cn-op{color:var(--dim)}
+.chain-arrow{
+  flex-shrink:0;
+  padding:0 6px;
+  color:var(--gold);
+  font-size:.8rem;
+}
+
+/* PIPELINE */
+.pipeline-section{background:rgba(5,15,32,.8);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.pipeline-grid{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:1px;background:var(--border);
+  border:1px solid var(--border);
+  margin-top:52px;
+}
+.pipe-node{
+  background:var(--surface);
+  padding:28px 18px;
+  position:relative;
+  transition:all .25s;
+  text-align:center;
+  cursor:default;
+}
+.pipe-node:hover{background:rgba(0,180,230,.06);transform:translateY(-3px)}
+.pipe-icon{font-size:1.6rem;margin-bottom:12px;display:block}
+.pipe-num{
+  font-family:'Anton',sans-serif;
+  font-size:.55rem;letter-spacing:.2em;
+  color:var(--dim);margin-bottom:6px;
+}
+.pipe-name{
+  font-family:'Syne',sans-serif;
+  font-size:.72rem;font-weight:700;
+  color:var(--blue2);margin-bottom:6px;
+}
+.pipe-desc{font-size:.48rem;color:var(--dim);line-height:1.7}
+.pipe-status{
+  position:absolute;top:10px;right:10px;
+  font-size:.42rem;letter-spacing:.08em;
+  color:var(--green);
+}
+.pipe-connector{
+  position:absolute;right:-1px;top:50%;transform:translateY(-50%);
+  width:2px;height:20px;
+  background:linear-gradient(180deg,transparent,var(--blue),transparent);
+  z-index:2;
+}
+.pipe-eq{
+  font-size:.48rem;
+  color:rgba(240,180,41,.5);
+  margin-top:8px;
+  font-style:italic;
+}
+
+/* FORMULA BLOCKS */
+.formula-block{
+  padding:20px 24px;
+  background:rgba(240,180,41,.03);
+  border:1px solid rgba(240,180,41,.12);
+  font-family:'DM Mono',monospace;
+  font-size:.7rem;
+  line-height:2.2;
+  color:var(--gold2);
+  position:relative;
+}
+.formula-block::before{
+  content:'';
+  position:absolute;left:0;top:0;bottom:0;width:2px;
+  background:linear-gradient(180deg,var(--gold),transparent);
+}
+.f-comment{color:var(--dim);font-size:.58rem}
+.f-var{color:var(--blue2)}
+.f-op{color:var(--amber)}
+
+/* ANTIGRAV */
+.antigrav-section{position:relative;overflow:hidden}
+.ag-split{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:60px;align-items:start;
+  margin-top:52px;
+}
+canvas#tower-canvas{
+  width:100%;border:1px solid var(--border);
+  background:rgba(3,8,20,.8);
+  display:block;
+}
+.ag-specs{display:flex;flex-direction:column;gap:16px}
+.spec-row{
+  border-left:2px solid var(--blue);
+  padding:14px 20px;
+  background:rgba(0,180,230,.04);
+  transition:all .2s;
+  position:relative;
+}
+.spec-row:hover{background:rgba(0,180,230,.08);border-left-color:var(--gold)}
+.spec-label{
+  font-size:.48rem;letter-spacing:.15em;
+  color:var(--dim);text-transform:uppercase;margin-bottom:4px;
+  display:flex;justify-content:space-between;
+}
+.spec-val{
+  font-family:'Syne',sans-serif;
+  font-size:.88rem;font-weight:700;color:var(--white);
+}
+.spec-val .sv-gold{color:var(--gold)}
+.spec-sub{font-size:.52rem;color:var(--dim);margin-top:3px;line-height:1.6}
+
+/* CHESS */
+.chess-section{background:rgba(5,15,32,.7);border-top:1px solid var(--border)}
+.chess-board-wrap{margin-top:52px;display:grid;grid-template-columns:auto 1fr;gap:48px;align-items:start}
+.chessboard{
+  display:grid;grid-template-columns:repeat(8,52px);
+  grid-template-rows:repeat(8,52px);
+  border:2px solid rgba(240,180,41,.5);
+  box-shadow:0 0 50px rgba(240,180,41,.1),inset 0 0 50px rgba(0,0,0,.3);
+  flex-shrink:0;
+}
+.cb{width:52px;height:52px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;position:relative;transition:all .2s}
+.cb.light{background:rgba(0,180,230,.05)}
+.cb.dark{background:rgba(0,180,230,.02)}
+.cb:hover{background:rgba(240,180,41,.12)!important;cursor:default}
+.cb .piece{filter:drop-shadow(0 0 5px currentColor);transition:transform .2s}
+.cb:hover .piece{transform:scale(1.15)}
+.cb.highlight{box-shadow:inset 0 0 0 2px rgba(45,232,159,.4)}
+
+.chess-strategy{display:flex;flex-direction:column;gap:14px}
+.strat-card{
+  padding:16px 20px;
+  border:1px solid var(--border);
+  background:rgba(5,15,32,.8);
+  transition:all .3s;
+  cursor:default;
+}
+.strat-card:hover{border-color:var(--blue);background:rgba(0,180,230,.04);transform:translateX(4px)}
+.strat-title{
+  font-family:'Syne',sans-serif;
+  font-size:.75rem;font-weight:700;
+  color:var(--blue2);margin-bottom:6px;
+}
+.strat-desc{font-size:.58rem;color:var(--dim);line-height:1.7}
+.strat-piece{float:right;font-size:1.5rem;opacity:.35;margin-left:10px}
+.strat-eq{font-size:.48rem;color:rgba(240,180,41,.4);margin-top:6px;font-style:italic}
+
+/* CERTS */
+.certs-section{border-top:1px solid var(--border)}
+.certs-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:24px;margin-top:52px;
+}
+.cert-card{
+  border:1px solid var(--border);
+  padding:28px 24px;
+  position:relative;overflow:hidden;
+  transition:all .3s;
+  background:rgba(8,23,46,.8);
+}
+.cert-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--blue),var(--gold));
+  opacity:0;transition:opacity .3s;
+}
+.cert-card:hover{border-color:rgba(0,180,230,.4);transform:translateY(-5px);box-shadow:0 20px 40px rgba(0,0,0,.4)}
+.cert-card:hover::before{opacity:1}
+.cert-issuer{font-size:.48rem;letter-spacing:.15em;color:var(--dim);text-transform:uppercase;margin-bottom:12px}
+.cert-name{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:var(--white);margin-bottom:4px;}
+.cert-type{font-size:.58rem;color:var(--blue2);margin-bottom:16px;}
+.cert-meta{font-size:.5rem;color:var(--dim);line-height:2.2}
+.cert-meta .val{color:var(--white)}
+.cert-badge{
+  position:absolute;bottom:16px;right:16px;
+  font-size:.45rem;letter-spacing:.1em;
+  padding:4px 10px;border:1px solid var(--green);
+  color:var(--green);text-transform:uppercase;
+}
+.cert-icon{font-size:2rem;margin-bottom:16px;display:block}
+
+/* AI STUDIO */
+.lab-section{background:rgba(5,15,32,.8);border-top:1px solid var(--border)}
+.lab-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:32px;flex-wrap:wrap;gap:16px;
+}
+.lab-search{
+  font-family:'DM Mono',monospace;font-size:.62rem;
+  padding:9px 16px;background:var(--surface);
+  border:1px solid var(--border);color:var(--white);
+  outline:none;width:240px;
+}
+.lab-search:focus{border-color:var(--blue);box-shadow:0 0 15px rgba(0,180,230,.1)}
+.lab-search::placeholder{color:var(--dim)}
+.lab-filter-btns{display:flex;gap:8px;flex-wrap:wrap}
+.flt-btn{
+  font-family:'DM Mono',monospace;font-size:.48rem;letter-spacing:.1em;
+  padding:7px 14px;background:transparent;
+  border:1px solid var(--border);color:var(--dim);cursor:pointer;
+  transition:all .15s;text-transform:uppercase;
+}
+.flt-btn:hover,.flt-btn.active{border-color:var(--blue);color:var(--blue)}
+.projects-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+  gap:10px;
+}
+.proj-card{
+  padding:16px;background:var(--surface);
+  border:1px solid var(--border);
+  cursor:default;transition:all .2s;
+  position:relative;overflow:hidden;
+}
+.proj-card::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,transparent 60%,rgba(0,180,230,.03));
+}
+.proj-card:hover{border-color:rgba(0,180,230,.3);transform:translateY(-2px)}
+.proj-type{font-size:.43rem;letter-spacing:.1em;color:var(--dim);text-transform:uppercase;margin-bottom:6px}
+.proj-name{font-size:.68rem;font-weight:500;color:var(--white);margin-bottom:8px;line-height:1.4}
+.proj-status{font-size:.43rem;display:flex;align-items:center;gap:5px}
+.ps-dot{width:5px;height:5px;border-radius:50%}
+.ps-dot.active{background:var(--green);box-shadow:0 0 6px var(--green)}
+.ps-dot.build{background:var(--amber)}
+.ps-dot.idea{background:var(--blue)}
+
+/* SOVEREIGN CERT */
+.cert-section-full{
+  border-top:1px solid var(--border);
+  background:radial-gradient(ellipse at center,rgba(240,180,41,.03),transparent 70%);
+}
+.sovereign-cert{
+  max-width:780px;margin:52px auto 0;
+  border:1px solid rgba(240,180,41,.35);
+  padding:60px;position:relative;
+  background:rgba(8,23,46,.95);
+  box-shadow:0 0 80px rgba(240,180,41,.05);
+}
+.sc-corner{position:absolute;width:22px;height:22px;border-color:var(--gold);border-style:solid}
+.sc-corner.tl{top:-1px;left:-1px;border-width:2px 0 0 2px}
+.sc-corner.tr{top:-1px;right:-1px;border-width:2px 2px 0 0}
+.sc-corner.bl{bottom:-1px;left:-1px;border-width:0 0 2px 2px}
+.sc-corner.br{bottom:-1px;right:-1px;border-width:0 2px 2px 0}
+
+.sc-header{text-align:center;margin-bottom:40px}
+.sc-seal{
+  width:82px;height:82px;
+  border:2px solid var(--gold);
+  border-radius:50%;
+  margin:0 auto 20px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:2.2rem;
+  animation:sealPulse 4s ease-in-out infinite;
+  box-shadow:0 0 30px rgba(240,180,41,.2);
+}
+@keyframes sealPulse{
+  0%,100%{box-shadow:0 0 20px rgba(240,180,41,.2)}
+  50%{box-shadow:0 0 60px rgba(240,180,41,.4),0 0 100px rgba(240,180,41,.1)}
+}
+.sc-title{
+  font-family:'Anton',sans-serif;
+  font-size:.68rem;letter-spacing:.28em;
+  color:var(--gold);text-transform:uppercase;margin-bottom:4px;
+}
+.sc-subtitle{font-size:.48rem;color:var(--dim);letter-spacing:.15em}
+.sc-divider{height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:24px 0}
+.sc-body{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:32px}
+.sc-field{font-size:.53rem;line-height:2.2}
+.sc-field .lbl{color:var(--dim);letter-spacing:.12em;text-transform:uppercase;display:block}
+.sc-field .val{color:var(--white);font-size:.63rem}
+.sc-field .val.gold{color:var(--gold)}
+.sc-field .val.blue{color:var(--blue2)}
+.sc-tokens{
+  background:rgba(0,180,230,.03);border:1px solid var(--border);
+  padding:16px 20px;margin-bottom:24px;
+}
+.sc-tokens-title{font-size:.48rem;letter-spacing:.15em;color:var(--dim);text-transform:uppercase;margin-bottom:12px}
+.sc-token-row{
+  display:flex;justify-content:space-between;
+  font-size:.53rem;padding:5px 0;
+  border-bottom:1px solid rgba(0,180,230,.07);
+}
+.sc-token-row:last-child{border:none}
+.sct-id{color:var(--blue2)}
+.sct-val{color:var(--gold)}
+.sc-hash{
+  font-family:'DM Mono',monospace;font-size:.48rem;color:var(--dim);
+  padding:12px 16px;background:rgba(0,0,0,.35);
+  border:1px solid var(--border);word-break:break-all;line-height:1.9;
+  margin-bottom:12px;
+}
+.sc-hash .lbl{color:var(--blue2);display:block;margin-bottom:4px;letter-spacing:.1em}
+.certs-display{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:16px;margin-top:24px;
+}
+.sc-cert-mini{
+  padding:16px;background:rgba(0,180,230,.03);
+  border:1px solid var(--border);text-align:center;font-size:.53rem;
+}
+.scm-name{color:var(--white);font-weight:500;margin-bottom:4px}
+.scm-no{color:var(--blue2)}
+.scm-valid{color:var(--dim)}
+.sc-sig{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-top:24px;flex-wrap:wrap;gap:16px;
+}
+.sc-sig-block{text-align:center}
+.sig-line{
+  width:160px;border-bottom:1px solid var(--dim);
+  margin:0 auto 6px;height:32px;
+  display:flex;align-items:flex-end;justify-content:center;
+  padding-bottom:4px;
+}
+.sig-name{
+  font-family:'Libre Baskerville',serif;
+  font-style:italic;font-size:.9rem;color:var(--gold);opacity:.7;
+}
+.sig-title{font-size:.43rem;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-top:4px}
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+.reveal.v{opacity:1;transform:none}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--ink)}
+::-webkit-scrollbar-thumb{background:rgba(0,180,230,.3);border-radius:2px}
+
+/* TICKER */
+.ticker-wrap{
+  background:rgba(0,180,230,.05);
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  overflow:hidden;height:32px;
+  position:relative;z-index:2;
+}
+.ticker{
+  display:flex;align-items:center;height:100%;
+  white-space:nowrap;
+  animation:tickerScroll 40s linear infinite;
+}
+@keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.ticker-item{
+  font-size:.48rem;letter-spacing:.12em;
+  color:var(--dim);padding:0 40px;
+}
+.ticker-item .ti-hi{color:var(--blue2)}
+.ticker-item .ti-gold{color:var(--gold)}
+
+/* FOOTER */
+.site-footer{
+  height:60px;background:var(--ink);
+  border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.45rem;color:var(--dim);
+  letter-spacing:.15em;position:relative;z-index:1;
+  gap:20px;
+}
+.footer-dot{color:var(--border)}
+
+@media(max-width:900px){
+  .section{padding:60px 24px}
+  .hero{padding:80px 24px 60px}
+  .pipeline-grid{grid-template-columns:repeat(3,1fr)}
+  .algebra-grid,.ag-split,.chess-board-wrap{grid-template-columns:1fr}
+  .certs-grid,.certs-display,.sc-body{grid-template-columns:1fr}
+  .sc-cert-mini{display:none}
+  .sovereign-cert{padding:32px 20px}
+  nav{padding:0 16px}
+  .nav-tabs{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    SER · SOVEREIGN LAB
+    <span class="nav-logo-sini">SINI ORCHESTRATOR</span>
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="smoothTo('#blueprint')">Blueprint</button>
+    <button class="nav-tab" onclick="smoothTo('#algebra')">Algebra Inversa</button>
+    <button class="nav-tab" onclick="smoothTo('#antigrav')">AntiGrav</button>
+    <button class="nav-tab" onclick="smoothTo('#chess')">Chess Matrix</button>
+    <button class="nav-tab" onclick="smoothTo('#studio')">AI Studio</button>
+    <button class="nav-tab" onclick="smoothTo('#certificate')">Certificado</button>
+  </div>
+  <div class="nav-status">
+    <div class="nav-dot"></div>
+    SINI · ENGINE ACTIVO
+  </div>
+</nav>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span class="ticker-item">SINI ORCHESTRATOR <span class="ti-hi">v6.0</span> ACTIVO</span>
+    <span class="ticker-item">ENGINE <span class="ti-gold">AHT SUPERCHARGE 27</span></span>
+    <span class="ticker-item">LICENSE <span class="ti-hi">HEISEN-MATRIX-05</span> · VERIFIED ✓</span>
+    <span class="ticker-item">RFC <span class="ti-gold">RIGR840827PJ0</span> · SOVEREIGN</span>
+    <span class="ticker-item">THRONE PROTOCOL <span class="ti-hi">v3.0</span> · RAILWAY BACKEND</span>
+    <span class="ticker-item">PORTFOLIO TOTAL <span class="ti-gold">$175,000 USD</span></span>
+    <span class="ticker-item">SHA-256 <span class="ti-hi">726561B1…D67C41E</span> · BLOCKCHAIN SEALED</span>
+    <span class="ticker-item">RSA-4096 · EC KEYS · JWT · AEGIS GATEWAY</span>
+    <span class="ticker-item">streetemporioroyal.com · quantum-loop.fusion-throne.com</span>
+    <!-- duplicate for infinite loop -->
+    <span class="ticker-item">SINI ORCHESTRATOR <span class="ti-hi">v6.0</span> ACTIVO</span>
+    <span class="ticker-item">ENGINE <span class="ti-gold">AHT SUPERCHARGE 27</span></span>
+    <span class="ticker-item">LICENSE <span class="ti-hi">HEISEN-MATRIX-05</span> · VERIFIED ✓</span>
+    <span class="ticker-item">RFC <span class="ti-gold">RIGR840827PJ0</span> · SOVEREIGN</span>
+    <span class="ticker-item">THRONE PROTOCOL <span class="ti-hi">v3.0</span> · RAILWAY BACKEND</span>
+    <span class="ticker-item">PORTFOLIO TOTAL <span class="ti-gold">$175,000 USD</span></span>
+    <span class="ticker-item">SHA-256 <span class="ti-hi">726561B1…D67C41E</span> · BLOCKCHAIN SEALED</span>
+    <span class="ticker-item">RSA-4096 · EC KEYS · JWT · AEGIS GATEWAY</span>
+    <span class="ticker-item">streetemporioroyal.com · quantum-loop.fusion-throne.com</span>
+  </div>
+</div>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<section class="hero">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <div class="eyebrow-dot"></div>
+      SINI ORCHESTRATOR v6.0 · SOVEREIGN LAB · ENGINE 27
+    </div>
+    <div class="hero-h1">
+      <div class="line1">SOVEREIGN</div>
+      <div class="line2">BLUEPRINT</div>
+      <div class="line3">LAB</div>
+      <span class="line4">SINI · AHT SUPREM HYBRID</span>
+    </div>
+    <div class="hero-founder">— Arquitectura de un Arquitecto Soberano —</div>
+    <div class="sini-badge">
+      <span class="sini-badge-label">SISTEMA</span>
+      <span class="sini-badge-sep">·</span>
+      <span class="sini-badge-val">SINI ORCHESTRATOR</span>
+      <span class="sini-badge-sep">·</span>
+      <span class="sini-badge-label">VECTOR</span>
+      <span class="sini-badge-sep">·</span>
+      <span class="sini-badge-val">Ψ = ∫F·dt → ∞</span>
+      <span class="sini-badge-sep">·</span>
+      <span class="sini-badge-label">NODE</span>
+      <span class="sini-badge-sep">·</span>
+      <span class="sini-badge-val">SER27</span>
+    </div>
+    <div class="hero-id-block">
+      <div class="id-item">LICENSE<span>HEISEN-MATRIX-05</span></div>
+      <div class="id-item">ENGINE<span>AHT SUPERCHARGE 27</span></div>
+      <div class="id-item">DOMAIN<span>streetemporioroyal.com</span></div>
+      <div class="id-item">RFC<span>RIGR840827PJ0</span></div>
+      <div class="id-item">PROJECTS<span>50+ Active</span></div>
+      <div class="id-item">PORTFOLIO<span>$175,000 USD</span></div>
+    </div>
+    <div class="hero-btns">
+      <a href="#blueprint" class="btn-p" onclick="smoothTo('#blueprint');return false;">Explorar Blueprint</a>
+      <a href="#algebra" class="btn-s" onclick="smoothTo('#algebra');return false;">Álgebra Inversa ↓</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ INVERSE ALGEBRA + ENGINEERING ═══════════════ -->
+<section class="section algebra-section" id="algebra">
+  <div class="section-tag">Álgebra Inversa · Ingeniería Inversa · Motor Matemático</div>
+  <h2>INVERSE <span class="accent-g">ALGEBRA</span> <span class="accent-b">ENGINE</span></h2>
+  <p class="section-sub">El núcleo matemático del sistema soberano. Álgebra inversa real: matrices de transformación, operadores de inversa, descomposición espectral aplicada a la arquitectura AHT-27.</p>
+
+  <div class="algebra-grid reveal">
+
+    <!-- LEFT: INVERSE MATRIX MATH -->
+    <div>
+      <div class="algebra-panel">
+        <div class="algebra-title">MATRIZ SOBERANA · INVERSE TRANSFORM A⁻¹</div>
+        <div class="math-display">
+<span class="m-comment">// SOVEREIGN IDENTITY MATRIX — AHT-27</span><br/>
+<span class="m-comment">// A · A⁻¹ = I  (identidad soberana)</span><br/><br/>
+<span class="m-key">A</span> <span class="m-op">=</span> <span class="m-var">SER_MATRIX</span>[<span class="m-val">8×8</span>, SHA256]<br/>
+<span class="m-key">A⁻¹</span> <span class="m-op">=</span> adj(A) / det(A)<br/>
+<span class="m-key">det(A)</span> <span class="m-op">=</span> <span class="m-val">Σ(−1)^(i+j) · M_ij</span><br/><br/>
+<span class="m-comment">// EIGENVALUE DECOMPOSITION</span><br/>
+<span class="m-var">A</span> <span class="m-op">=</span> Q · Λ · Q⁻¹<br/>
+<span class="m-var">λ₂₇</span> <span class="m-op">=</span> <span class="m-val">∥HEISEN∥² · e^(iπ/27)</span><br/>
+<span class="m-var">v⃗_SER</span> <span class="m-op">=</span> (A − λI)⁻¹ · <span class="m-key">0⃗</span><br/><br/>
+<span class="m-comment">// RFC VECTOR ENCODE</span><br/>
+<span class="m-var">RIGR840827PJ0</span> → <span class="m-val">Σ=827</span> → <span class="m-key">∇·SER27</span>
+        </div>
+
+        <div class="tensor-grid">
+          <div class="tensor-cell">
+            <span class="tc-label">λ₁ · IDENTITY</span>
+            <div class="tc-val" id="lam1">0.9272</div>
+            <span class="tc-sub">eigval ↑</span>
+          </div>
+          <div class="tensor-cell">
+            <span class="tc-label">λ₂ · AUTHORITY</span>
+            <div class="tc-val" id="lam2">0.5400</div>
+            <span class="tc-sub">RSA · stable</span>
+          </div>
+          <div class="tensor-cell">
+            <span class="tc-label">λ₃ · EXECUTION</span>
+            <div class="tc-val" id="lam3">1.0000</div>
+            <span class="tc-sub">AHT27 core</span>
+          </div>
+          <div class="tensor-cell">
+            <span class="tc-label">‖A‖ FROBENIUS</span>
+            <div class="tc-val" id="frob">27.00</div>
+            <span class="tc-sub">norm root</span>
+          </div>
+          <div class="tensor-cell">
+            <span class="tc-label">det(A) SHA</span>
+            <div class="tc-val" id="detA">±1.000</div>
+            <span class="tc-sub">unitary</span>
+          </div>
+          <div class="tensor-cell">
+            <span class="tc-label">rank(Ψ)</span>
+            <div class="tc-val">8 / 8</div>
+            <span class="tc-sub">full rank ✓</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- INVERSE ENGINEERING CHAIN -->
+      <div class="algebra-panel" style="margin-top:16px">
+        <div class="algebra-title">INGENIERÍA INVERSA · REVERSE PIPELINE</div>
+        <div class="math-display" style="font-size:.62rem">
+<span class="m-comment">// REVERSE ENGINEERING PROTOCOL — SINI v6.0</span><br/>
+<span class="m-comment">// Observar OUTPUT → Reconstruir INPUT → Validar</span><br/><br/>
+<span class="m-key">OBSERVED</span>:  streetemporioroyal.com [live]<br/>
+<span class="m-key">DECOMPILE</span>: f⁻¹(output) → source_arch<br/>
+<span class="m-var">Φ(x)</span>  <span class="m-op">=</span> ∫₀^T F(τ)·e^(−iωτ) dτ<br/>
+<span class="m-var">x_orig</span> <span class="m-op">=</span> F⁻¹{Φ(ω)} · <span class="m-val">HEISEN_KEY</span><br/><br/>
+<span class="m-comment">// LAPLACE INVERSE — TRANSFER FUNCTION</span><br/>
+<span class="m-var">H(s)</span> <span class="m-op">=</span> Y(s)/X(s) → <span class="m-key">h(t)</span> = L⁻¹{H(s)}<br/>
+<span class="m-var">AHT_RESPONSE</span>(t) <span class="m-op">=</span> <span class="m-val">Σ Res[H·e^(st)]</span>
+        </div>
+        <div class="inverse-chain">
+          <div class="chain-node">
+            <span class="cn-id">OUTPUT</span>
+            <span class="cn-op">f(x) known</span>
+          </div>
+          <div class="chain-arrow">→</div>
+          <div class="chain-node">
+            <span class="cn-id">OBSERVE</span>
+            <span class="cn-op">measure Φ</span>
+          </div>
+          <div class="chain-arrow">→</div>
+          <div class="chain-node">
+            <span class="cn-id">INVERT</span>
+            <span class="cn-op">F⁻¹{Φ(ω)}</span>
+          </div>
+          <div class="chain-arrow">→</div>
+          <div class="chain-node">
+            <span class="cn-id">VERIFY</span>
+            <span class="cn-op">SHA-256 ✓</span>
+          </div>
+          <div class="chain-arrow">→</div>
+          <div class="chain-node">
+            <span class="cn-id">SOVEREIGN</span>
+            <span class="cn-op">A·A⁻¹=I</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: LIVE MATRIX CANVAS -->
+    <div>
+      <div class="algebra-panel">
+        <div class="algebra-title">LIVE TRANSFORM CANVAS · A⁻¹ · ROTATION ℝ⁸</div>
+        <canvas id="matrix-canvas" height="260"></canvas>
+        <div class="math-display" style="margin-top:16px;font-size:.62rem">
+<span class="m-comment">// SPECTRAL DECOMPOSITION — SER27 SPACE</span><br/>
+<span class="m-var">R(θ)</span> <span class="m-op">=</span> [[cos θ, −sin θ], [sin θ, cos θ]]<br/>
+<span class="m-var">θ_27</span> <span class="m-op">=</span> 2π / 27 <span class="m-op">=</span> <span class="m-val">0.23271 rad</span><br/>
+<span class="m-var">T_sov</span> <span class="m-op">=</span> R(θ_27) ⊗ I₄ · SHA_EMBED<br/><br/>
+<span class="m-comment">// QUANTUM FIELD INVERSE</span><br/>
+<span class="m-var">∇²Ψ</span> <span class="m-op">+</span> k²Ψ <span class="m-op">=</span> <span class="m-val">−ρ(HEISEN)</span><br/>
+<span class="m-var">Ψ(r)</span> <span class="m-op">=</span> G(r,r') ★ ρ(r')  [Green's inverse]<br/>
+<span class="m-var">G⁻¹</span> <span class="m-op">=</span> (−∇² − k²) · <span class="m-key">SOVEREIGN KERNEL</span>
+        </div>
+      </div>
+
+      <div class="algebra-panel" style="margin-top:16px">
+        <div class="algebra-title">FOURIER INVERSA · SIGNAL RECONSTRUCT</div>
+        <div class="math-display" style="font-size:.62rem">
+<span class="m-comment">// INVERSE FOURIER — RFC SIGNAL</span><br/>
+<span class="m-var">RIGR840827PJ0</span> → <span class="m-key">ρ(t)</span> = digital signal<br/>
+<span class="m-var">Ρ(ω)</span> <span class="m-op">=</span> ∫ρ(t)·e^(−iωt) dt<br/>
+<span class="m-var">ρ(t)</span> <span class="m-op">=</span> (1/2π)∫Ρ(ω)·e^(iωt) dω<br/><br/>
+<span class="m-comment">// ENERGY SPECTRUM — AHT27</span><br/>
+<span class="m-var">E_n</span> <span class="m-op">=</span> ħω(n + ½) · <span class="m-val">27</span><br/>
+<span class="m-var">‹x›</span> <span class="m-op">=</span> ‹Ψ|x̂|Ψ› <span class="m-op">=</span> <span class="m-val">SER_POSITION</span><br/>
+<span class="m-var">ΔxΔp</span> <span class="m-op">≥</span> ħ/2 · <span class="m-key">HEISEN ✓</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ PIPELINE ═══════════════ -->
+<section class="section pipeline-section" id="blueprint">
+  <div class="section-tag">Pipeline Core · Enterprise Blueprint · SINI ORCHESTRATOR</div>
+  <h2>CONSTRUCTION <span class="accent-b">PIPELINE</span></h2>
+  <p class="section-sub">El núcleo de construcción soberana. Cada nodo es una capa del sistema. Cada capa tiene su ecuación de transformación inversa — construible, auditable, soberana.</p>
+
+  <div class="pipeline-grid reveal">
+    <div class="pipe-node">
+      <div class="pipe-status">● LIVE</div>
+      <span class="pipe-icon">👤</span>
+      <div class="pipe-num">LAYER 01</div>
+      <div class="pipe-name">IDENTITY</div>
+      <div class="pipe-desc">RFC · Name · Domain · Sovereign Seal · RSA-4096 Keys</div>
+      <div class="pipe-eq">I(x) = x ⊕ RFC_KEY</div>
+      <div class="pipe-connector"></div>
+    </div>
+    <div class="pipe-node">
+      <div class="pipe-status">● LIVE</div>
+      <span class="pipe-icon">🔐</span>
+      <div class="pipe-num">LAYER 02</div>
+      <div class="pipe-name">AUTHORITY</div>
+      <div class="pipe-desc">Master API Key · JWT · AHT-GATEWAY Auth · License Verify</div>
+      <div class="pipe-eq">A = sign(H, RSA⁻¹)</div>
+      <div class="pipe-connector"></div>
+    </div>
+    <div class="pipe-node">
+      <div class="pipe-status">● LIVE</div>
+      <span class="pipe-icon">⚙️</span>
+      <div class="pipe-num">LAYER 03</div>
+      <div class="pipe-name">EXECUTION</div>
+      <div class="pipe-desc">AHT SUPREM HYBRID · Quantum Loop · Command Brain 27</div>
+      <div class="pipe-eq">E = ∫F·dt · AHT₂₇</div>
+      <div class="pipe-connector"></div>
+    </div>
+    <div class="pipe-node">
+      <div class="pipe-status">● LIVE</div>
+      <span class="pipe-icon">🧠</span>
+      <div class="pipe-num">LAYER 04</div>
+      <div class="pipe-name">COGNITIVE</div>
+      <div class="pipe-desc">AI Brain "Mentes Brillantes" · Intent · Generate · Orchestrate</div>
+      <div class="pipe-eq">C = Σ(λᵢvᵢvᵢᵀ)·Ψ</div>
+      <div class="pipe-connector"></div>
+    </div>
+    <div class="pipe-node">
+      <div class="pipe-status">● LIVE</div>
+      <span class="pipe-icon">📊</span>
+      <div class="pipe-num">LAYER 05</div>
+      <div class="pipe-name">ANALYTICS</div>
+      <div class="pipe-desc">ENTROPY-BRAID-03 · Audit Logs · Reporting · Governance</div>
+      <div class="pipe-eq">H = −Σ p·log(p)</div>
+      <div class="pipe-connector"></div>
+    </div>
+    <div class="pipe-node">
+      <div class="pipe-status" style="color:var(--gold)">♛ CORE</div>
+      <span class="pipe-icon">♾️</span>
+      <div class="pipe-num">LAYER 06</div>
+      <div class="pipe-name">PERSISTENCE</div>
+      <div class="pipe-desc">FUSION-CORE-00 · Sovereign Root · Blockchain Evidence Vault</div>
+      <div class="pipe-eq">P = SHA256(∞)</div>
+    </div>
+  </div>
+
+  <div style="margin-top:32px;display:grid;grid-template-columns:1fr 1fr;gap:16px" class="reveal">
+    <div class="formula-block">
+      <span class="f-comment">// SINI ORCHESTRATOR v6.0 — ENV CONFIG</span><br/>
+      <span class="f-var">OWNER_NAME</span> <span class="f-op">=</span> "Roberto Rivera Gamas"<br/>
+      <span class="f-var">RFC</span> <span class="f-op">=</span> "RIGR840827PJ0"<br/>
+      <span class="f-var">LICENSE_ID</span> <span class="f-op">=</span> "HEISEN-MATRIX-05"<br/>
+      <span class="f-var">ENGINE</span> <span class="f-op">=</span> "AHT_SUPERCHARGE_27"<br/>
+      <span class="f-var">SYSTEM</span> <span class="f-op">=</span> "SINI_OMEGA_v6.0"<br/>
+      <span class="f-var">ROOT_DOMAIN</span> <span class="f-op">=</span> "streetemporioroyal.com"<br/>
+      <span class="f-var">HASH_ALGO</span> <span class="f-op">=</span> "SHA-256"<br/>
+      <span class="f-var">SIG_ALGO</span> <span class="f-op">=</span> "RSA-4096 / EC-P256"<br/>
+      <span class="f-var">THETA_27</span> <span class="f-op">=</span> 2π/27 = 0.23271 rad
+    </div>
+    <div class="formula-block" style="color:var(--blue2)">
+      <span class="f-comment">// THRONE PROTOCOL v3.0 — LIVE ROUTES</span><br/>
+      GET  /api/health<br/>
+      POST /api/auth/master-login<br/>
+      POST /api/license/verify<br/>
+      POST /api/license/issue<br/>
+      GET  /api/license/status<br/>
+      GET  /api/matrix/assets<br/>
+      POST /api/matrix/assign<br/>
+      POST /api/brain/intent<br/>
+      POST /api/brain/generate<br/>
+      GET  /api/audit/logs
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ ANTI-GRAVITY TOWER ═══════════════ -->
+<section class="section antigrav-section" id="antigrav">
+  <div class="section-tag">Physics Lab · Inverse Gravity · Anti-Gravity Tower · AHT Architecture</div>
+  <h2>ANTI-GRAVITY <span class="accent-g">TOWER</span></h2>
+  <p class="section-sub">Torre de AntiGravedad — física inversa y álgebra abstracta fusionadas. Campo vectorial ∇·F(x) = −∇Φ(x) donde la gravedad se convierte en vector ascendente soberano.</p>
+
+  <div class="ag-split reveal">
+    <div>
+      <canvas id="tower-canvas" width="480" height="540"></canvas>
+    </div>
+    <div class="ag-specs">
+      <div class="spec-row">
+        <div class="spec-label">Campo Inverso <span>∇ · F = −∇Φ</span></div>
+        <div class="spec-val">∇ · F(x) <span class="sv-gold">=</span> −∇Φ(x)</div>
+        <div class="spec-sub">Campo de fuerza inversa real — la gravedad se convierte en vector ascendente soberano. Divergencia negativa del potencial escalar.</div>
+      </div>
+      <div class="spec-row">
+        <div class="spec-label">Álgebra Inversa <span>A⁻¹·B=I→Ψ⁺</span></div>
+        <div class="spec-val">A⁻¹ · B = I <span class="sv-gold">→ Ψ⁺</span></div>
+        <div class="spec-sub">Matriz de transformación soberana — inversa de la arquitectura AHT. Rotación en espacio ℝ⁸ con θ = 2π/27.</div>
+      </div>
+      <div class="spec-row">
+        <div class="spec-label">Capa Molecular <span>C₆₀·AHT→ΔE</span></div>
+        <div class="spec-val">C₆₀ · AHT <span class="sv-gold">→</span> ΔE = hν</div>
+        <div class="spec-sub">Buckminsterfullereno — 60 nodos, 27 enlaces activos. Transición de energía cuántica por absorción de señal soberana.</div>
+      </div>
+      <div class="spec-row">
+        <div class="spec-label">Velocidad de Escape <span>v = √(2GM/r)·27</span></div>
+        <div class="spec-val">v<sub>esc</sub> = √(2GM/r) <span class="sv-gold">· 27</span></div>
+        <div class="spec-sub">Velocidad mínima para que el sistema alcance soberanía total. Factor 27 como constante de escape del ecosistema.</div>
+      </div>
+      <div class="spec-row">
+        <div class="spec-label">Ecuación Maestra <span>Ψ(SOV)=∫F·dt</span></div>
+        <div class="spec-val">Ψ(SOV) = ∫₀^∞ F · dt</div>
+        <div class="spec-sub">Integral de fuerza en el tiempo: soberanía digital acumulada. Converge cuando F = AHT_SUPERCHARGE_27.</div>
+      </div>
+      <div class="formula-block" style="margin-top:4px">
+        <span class="f-comment">// INVERSE GRAVITY MODEL — AHT v1.0</span><br/>
+        <span class="f-var">F_up</span> <span class="f-op"> = </span>−G · (m₁·m₂) / r²<br/>
+        <span class="f-var">Φ_field</span> <span class="f-op"> = </span>∇²Φ = 4πGρ → invert<br/>
+        <span class="f-var">v_escape</span> <span class="f-op"> = </span>√(2GM/r) · <span style="color:var(--gold)">AHT₂₇</span><br/>
+        <span class="f-var">Ψ_sov</span> <span class="f-op"> = </span>e^(iπ) · <span style="color:var(--blue2)">HEISEN</span> <span class="f-op">+ 1</span> <span class="f-comment">= 0 ✓</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ CHESS MATRIX ═══════════════ -->
+<section class="section chess-section" id="chess">
+  <div class="section-tag">Strategic Intelligence · World Chess Matrix · SER27 Game Theory</div>
+  <h2>CHESS <span class="accent-b">MATRIX</span> MUNDIAL</h2>
+  <p class="section-sub">El tablero global. Cada pieza es un actor del ecosistema. Cada movimiento es una decisión estratégica soberana. Teoría de juegos aplicada — Minimax con factor SER27.</p>
+
+  <div class="chess-board-wrap reveal">
+    <div>
+      <div class="chessboard" id="chessboard"></div>
+      <div style="font-size:.48rem;color:var(--dim);margin-top:12px;text-align:center;letter-spacing:.1em">
+        POSICIÓN SOBERANA · MOVIMIENTO 27 · JAQUE A LA MATRIZ
+      </div>
+      <div style="font-size:.42rem;color:rgba(240,180,41,.4);margin-top:6px;text-align:center;font-style:italic">
+        Minimax(d) = max{min{V(nodo)}} · θ₂₇
+      </div>
+    </div>
+    <div class="chess-strategy">
+      <div class="strat-card">
+        <div class="strat-piece">♔</div>
+        <div class="strat-title">REY — HEISEN-MATRIX-05</div>
+        <div class="strat-desc">La pieza central. Token soberano flagship de $75,000 USD. Toda la defensa del ecosistema gira alrededor de esta identidad. Nunca puede ser capturado.</div>
+        <div class="strat-eq">V(REY) = ∞ · det(A) | A = Ψ_SOVEREIGN</div>
+      </div>
+      <div class="strat-card">
+        <div class="strat-piece">♕</div>
+        <div class="strat-title">REINA — FUSION-CORE-00</div>
+        <div class="strat-desc">La pieza más poderosa. El core engine del ecosistema. Movimiento libre en todas direcciones. Solo el propietario la controla.</div>
+        <div class="strat-eq">Q(x) = max{∇·F} ∀ dirs ∈ ℝ⁸</div>
+      </div>
+      <div class="strat-card">
+        <div class="strat-piece">♗</div>
+        <div class="strat-title">ALFIL — AHT-GATEWAY</div>
+        <div class="strat-desc">Movimiento diagonal. La puerta de entrada al ecosistema. Conecta identidad con autoridad de forma encriptada. RSA-4096 en cada movimiento.</div>
+        <div class="strat-eq">B(θ) = R(π/4) · A⁻¹ · KEY_4096</div>
+      </div>
+      <div class="strat-card">
+        <div class="strat-piece">♘</div>
+        <div class="strat-title">CABALLO — COMMAND BRAIN 27</div>
+        <div class="strat-desc">El único que salta sobre otras piezas. El algoritmo cognitivo que orquesta decisiones. Movimiento en L — impredecible para el adversario.</div>
+        <div class="strat-eq">N(L) = {(±1,±2),(±2,±1)} · 2π/27</div>
+      </div>
+      <div class="strat-card">
+        <div class="strat-piece">♙</div>
+        <div class="strat-title">PEONES — SOVEREIGN PLANS</div>
+        <div class="strat-desc">$1,500 → $4,500 → $12,500 → $25,000. Cada plan avanza en el tablero. Al llegar al final se coronan: Ultra-Elite = nueva Reina soberana.</div>
+        <div class="strat-eq">P(n) = 1500 · 3^(n-1) → coronación</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ CERTIFICATIONS ═══════════════ -->
+<section class="section certs-section">
+  <div class="section-tag">Credenciales Oficiales · Portafolio Certificado · Vigentes 2028</div>
+  <h2>CERTIFIED <span class="accent-g">AUTHORITY</span></h2>
+  <p class="section-sub">Certificaciones oficiales del Arquitecto Soberano. Validadas internacionalmente y vigentes. Tres credenciales Airtable — Builder, Admin, AI App Builder.</p>
+  <div class="certs-grid reveal">
+    <div class="cert-card">
+      <span class="cert-icon">🏛️</span>
+      <div class="cert-issuer">Airtable · Official Certification</div>
+      <div class="cert-name">Certified Admin</div>
+      <div class="cert-type">Administration & Enterprise Management</div>
+      <div class="cert-meta">
+        Vigente: <span class="val">Feb 18, 2026 → Mar 18, 2028</span><br/>
+        Certificado: <span class="val">8enwb259hf8m</span><br/>
+        Estado: <span class="val" style="color:var(--green)">ACTIVE ✓</span>
+      </div>
+      <div class="cert-badge">CERTIFIED ADMIN</div>
+    </div>
+    <div class="cert-card">
+      <span class="cert-icon">🤖</span>
+      <div class="cert-issuer">Airtable · Official Certification</div>
+      <div class="cert-name">AI App Builder</div>
+      <div class="cert-type">Artificial Intelligence Applications</div>
+      <div class="cert-meta">
+        Vigente: <span class="val">Feb 17, 2026 → Mar 17, 2028</span><br/>
+        Certificado: <span class="val">xt9gtgzc9enw</span><br/>
+        Estado: <span class="val" style="color:var(--green)">ACTIVE ✓</span>
+      </div>
+      <div class="cert-badge">AI CERTIFIED</div>
+    </div>
+    <div class="cert-card">
+      <span class="cert-icon">🔨</span>
+      <div class="cert-issuer">Airtable · Official Certification</div>
+      <div class="cert-name">Certified Builder</div>
+      <div class="cert-type">Platform Architecture & Development</div>
+      <div class="cert-meta">
+        Vigente: <span class="val">Feb 27, 2026 → Mar 27, 2028</span><br/>
+        Certificado: <span class="val">zhipsiu8asuw</span><br/>
+        Estado: <span class="val" style="color:var(--green)">ACTIVE ✓</span>
+      </div>
+      <div class="cert-badge">CERTIFIED BUILDER</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ AI STUDIO LAB ═══════════════ -->
+<section class="section lab-section" id="studio">
+  <div class="section-tag">Personal AI Studio · Zona de Experimentación · SINI LAB</div>
+  <h2>AI STUDIO <span class="accent-b">LAB</span></h2>
+  <p class="section-sub">Tu zona personal de construcción. Más de 50 proyectos activos en el ecosistema soberano. Cada uno es un experimento, prototipo, o producto en construcción.</p>
+  <div class="lab-header">
+    <input type="text" class="lab-search" placeholder="Buscar proyecto..." oninput="filterProjects(this.value)"/>
+    <div class="lab-filter-btns">
+      <button class="flt-btn active" onclick="filterByStatus('all',this)">All</button>
+      <button class="flt-btn" onclick="filterByStatus('active',this)">Active</button>
+      <button class="flt-btn" onclick="filterByStatus('build',this)">Building</button>
+      <button class="flt-btn" onclick="filterByStatus('idea',this)">Ideas</button>
+    </div>
+  </div>
+  <div class="projects-grid reveal" id="projects-grid"></div>
+</section>
+
+<!-- ═══════════════ SOVEREIGN CERTIFICATE ═══════════════ -->
+<section class="section cert-section-full" id="certificate">
+  <div class="section-tag">Certificado RSA-4096 · SHA-256 · Soberanía Digital · SINI SEAL</div>
+  <h2>SOVEREIGN <span class="accent-g">CERTIFICATE</span></h2>
+  <p class="section-sub">Documento criptográfico oficial. Firmado con RSA-4096. Verificable en quantum-loop.fusion-throne.com · SINI ORCHESTRATOR SEAL</p>
+  <div class="sovereign-cert reveal">
+    <div class="sc-corner tl"></div>
+    <div class="sc-corner tr"></div>
+    <div class="sc-corner bl"></div>
+    <div class="sc-corner br"></div>
+    <div class="sc-header">
+      <div class="sc-seal">♛</div>
+      <div class="sc-title">◈ AHT-GATEWAY · SOVEREIGN ENTERPRISE CERTIFICATE ◈</div>
+      <div class="sc-subtitle">ROYAL SOVEREIGN DIGITAL ARCHITECTURE · ALPHA VIP · SINI ORCHESTRATOR v6.0</div>
+    </div>
+    <div class="sc-divider"></div>
+    <div class="sc-body">
+      <div class="sc-field"><span class="lbl">Propietario Registrado</span><span class="val gold">Roberto Rivera Gamas</span></div>
+      <div class="sc-field"><span class="lbl">RFC Oficial</span><span class="val">RIGR840827PJ0</span></div>
+      <div class="sc-field"><span class="lbl">License Token ID</span><span class="val blue">HEISEN-MATRIX-05</span></div>
+      <div class="sc-field"><span class="lbl">Tier</span><span class="val gold">Sovereign Enterprise · ALPHA VIP</span></div>
+      <div class="sc-field"><span class="lbl">Engine Version</span><span class="val">AHT LGORITMO SUPERCHARGE (27)</span></div>
+      <div class="sc-field"><span class="lbl">Sistema Orquestador</span><span class="val blue">SINI OMEGA v6.0</span></div>
+      <div class="sc-field"><span class="lbl">Valor Declarado</span><span class="val gold">$75,000 USD</span></div>
+      <div class="sc-field"><span class="lbl">Root Domain</span><span class="val blue">streetemporioroyal.com</span></div>
+      <div class="sc-field"><span class="lbl">Fecha de Emisión</span><span class="val">2026-01-18 03:04:05 UTC</span></div>
+      <div class="sc-field"><span class="lbl">Estado</span><span class="val" style="color:var(--green)">ACTIVE · VERIFIED ✓</span></div>
+    </div>
+    <div class="sc-tokens">
+      <div class="sc-tokens-title">FUSION TOKEN PORTFOLIO · PORTAFOLIO COMPLETO</div>
+      <div class="sc-token-row"><span class="sct-id">HEISEN-MATRIX-05</span><span>Sovereign Enterprise</span><span class="sct-val">$75,000</span></div>
+      <div class="sc-token-row"><span class="sct-id">QUANTUM-LOOP-06</span><span>Quantum Execution · Tier 2</span><span class="sct-val">$40,000</span></div>
+      <div class="sc-token-row"><span class="sct-id">AETHER-TORUS-01</span><span>Architecture · Tier 1</span><span class="sct-val">$25,000</span></div>
+      <div class="sc-token-row"><span class="sct-id">ENTROPY-BRAID-03</span><span>Analytics · Tier 2</span><span class="sct-val">$35,000</span></div>
+      <div class="sc-token-row"><span class="sct-id">FUSION-CORE-00</span><span>Sovereign Root · Owner Only</span><span class="sct-val" style="color:var(--gold)">RESERVED</span></div>
+      <div class="sc-token-row" style="border-top:1px solid var(--border);padding-top:8px;margin-top:4px">
+        <span style="color:var(--dim)">PORTFOLIO TOTAL</span><span></span>
+        <span class="sct-val" style="font-size:.75rem">$175,000 USD</span>
+      </div>
+    </div>
+    <div class="certs-display">
+      <div class="sc-cert-mini"><div class="scm-name">Airtable Admin</div><div class="scm-no">8enwb259hf8m</div><div class="scm-valid">Feb 2026 – Mar 2028</div></div>
+      <div class="sc-cert-mini"><div class="scm-name">AI App Builder</div><div class="scm-no">xt9gtgzc9enw</div><div class="scm-valid">Feb 2026 – Mar 2028</div></div>
+      <div class="sc-cert-mini"><div class="scm-name">Airtable Builder</div><div class="scm-no">zhipsiu8asuw</div><div class="scm-valid">Feb 2026 – Mar 2028</div></div>
+    </div>
+    <div class="sc-divider"></div>
+    <div class="sc-hash"><span class="lbl">BLOCKCHAIN HASH ID (SHA-256)</span>726561B11BB2D344648071C230401A0307D6E6FD5C8A9FCAC06474B8AD67C41E</div>
+    <div class="sc-hash"><span class="lbl">MASTER API CREDENTIAL (RSA-4096 SIGNED)</span>fus_7A3F5F6D1C4831A9C5BDA10F6A2B0D66BD429D32456143B6C9DF23A2A76 · Permisos: read · issue · verify</div>
+    <div class="sc-hash"><span class="lbl">TRANSACTION REFERENCE</span>STRIPE-50K-001 · VALIDADO POR EL ORQUESTADOR · ID: MAINOLOG3N7-AXLISO</div>
+    <div class="sc-sig">
+      <div class="sc-sig-block">
+        <div class="sig-line"><span class="sig-name">Roberto Rivera Gamas</span></div>
+        <div class="sig-title">Sovereign Architect · Street Emporio Royal</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-size:2.5rem;opacity:.4">◈</div>
+        <div style="font-size:.42rem;color:var(--dim);letter-spacing:.15em;margin-top:4px">SOVEREIGN SEAL<br/>AHT-GATEWAY · SINI</div>
+      </div>
+      <div class="sc-sig-block">
+        <div class="sig-line"><span class="sig-name" style="font-size:.7rem;color:var(--blue2)">SINI ORCHESTRATOR v6.0</span></div>
+        <div class="sig-title">AHT SUPREM HYBRID · Execution Layer</div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:24px;font-size:.43rem;color:var(--dim);letter-spacing:.1em;line-height:2.2">
+      ESTE DOCUMENTO CERTIFICA LA POSESIÓN LEGAL DEL NODO DE INFRAESTRUCTURA SOBERANA<br/>
+      VERIFICABLE VÍA SHA-256 Y RSA-4096 EN quantum-loop.fusion-throne.com<br/>
+      SINI ORCHESTRATOR v6.0 · AHT SUPERCHARGE 27 · STRICTLY CONFIDENTIAL
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <span>SINI ORCHESTRATOR v6.0</span>
+  <span class="footer-dot">·</span>
+  <span>AHT SUPERCHARGE 27</span>
+  <span class="footer-dot">·</span>
+  <span>streetemporioroyal.com</span>
+  <span class="footer-dot">·</span>
+  <span>quantum-loop.fusion-throne.com</span>
+  <span class="footer-dot">·</span>
+  <span>R.R.G. · SOVEREIGN ARCHITECT</span>
+</footer>
+
+<script>
+// ── NAV
+function smoothTo(id){
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelector(id)?.scrollIntoView({behavior:'smooth'});
+}
+document.querySelectorAll('.nav-tab').forEach(btn=>{
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+// ── REVEAL
+const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('v')}),{threshold:.06});
+document.querySelectorAll('.reveal').forEach(r=>obs.observe(r));
+
+// ── HERO CANVAS (Anti-gravity particles + matrix rain)
+(function(){
+  const c=document.getElementById('hero-canvas');
+  const ctx=c.getContext('2d');
+  function resize(){c.width=window.innerWidth;c.height=window.innerHeight;}
+  resize();window.addEventListener('resize',resize);
+
+  const pts=[];
+  for(let i=0;i<100;i++) pts.push({
+    x:Math.random()*c.width,
+    y:c.height+Math.random()*200,
+    vy:-(Math.random()*.5+.08),
+    vx:(Math.random()-.5)*.12,
+    r:Math.random()*1.8+.2,
+    color:Math.random()>.5?'0,180,230':'240,180,41',
+    a:Math.random()*.25+.04,
+    phase:Math.random()*Math.PI*2
+  });
+
+  // matrix rain chars
+  const chars='ΑΒΓΔΘΛΞΨΩ∇∫∂∞⊗⊕♛♔AHT27';
+  const cols=Math.floor(c.width/20);
+  const drops=new Array(cols).fill(1).map(()=>Math.random()*c.height/14);
+
+  let frame=0;
+  (function loop(){
+    frame++;
+    ctx.clearRect(0,0,c.width,c.height);
+
+    // matrix rain (very faint)
+    ctx.font='12px DM Mono,monospace';
+    for(let i=0;i<cols;i++){
+      if(Math.random()>.97){
+        const ch=chars[Math.floor(Math.random()*chars.length)];
+        ctx.fillStyle='rgba(0,180,230,0.04)';
+        ctx.fillText(ch,i*20,drops[i]*14);
+        drops[i]++;
+        if(drops[i]*14>c.height&&Math.random()>.98) drops[i]=0;
+      }
+    }
+
+    // floating particles
+    pts.forEach(p=>{
+      p.y+=p.vy;
+      p.x+=p.vx+Math.sin(frame*.0005+p.phase)*.12;
+      if(p.y<-10){p.y=c.height+10;p.x=Math.random()*c.width}
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(${p.color},${p.a})`;ctx.fill();
+    });
+
+    // connection lines between nearby particles
+    for(let i=0;i<pts.length;i++){
+      for(let j=i+1;j<pts.length;j++){
+        const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y;
+        const d=Math.sqrt(dx*dx+dy*dy);
+        if(d<80){
+          ctx.beginPath();
+          ctx.moveTo(pts[i].x,pts[i].y);
+          ctx.lineTo(pts[j].x,pts[j].y);
+          ctx.strokeStyle=`rgba(0,180,230,${(1-d/80)*0.05})`;
+          ctx.lineWidth=.5;ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(loop);
+  })();
+})();
+
+// ── INVERSE ALGEBRA MATRIX CANVAS
+(function(){
+  const c=document.getElementById('matrix-canvas');
+  const ctx=c.getContext('2d');
+  c.width=c.offsetWidth;c.height=260;
+  const W=c.width,H=c.height;
+  const cx=W/2,cy=H/2;
+  let t=0;
+
+  // SER27 — draw rotating inverse matrix transform visualization
+  function draw(){
+    t+=0.012;
+    ctx.clearRect(0,0,W,H);
+
+    // Grid
+    ctx.strokeStyle='rgba(0,180,230,0.07)';ctx.lineWidth=.5;
+    for(let x=0;x<W;x+=20){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke()}
+    for(let y=0;y<H;y+=20){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
+
+    // Draw 8 basis vectors of ℝ⁸ projected to 2D (eigenvectors)
+    const n=8;
+    const radius=Math.min(W,H)*0.35;
+    const theta27=2*Math.PI/27;
+
+    for(let i=0;i<n;i++){
+      const baseAngle=(i/n)*Math.PI*2;
+      const rotAngle=baseAngle+t*theta27; // rotate by θ₂₇ per frame
+      const x1=cx+Math.cos(rotAngle)*radius;
+      const y1=cy+Math.sin(rotAngle)*radius;
+      // basis vector line
+      const alpha=0.15+0.1*Math.sin(t+i);
+      ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(x1,y1);
+      ctx.strokeStyle=`rgba(0,180,230,${alpha})`;ctx.lineWidth=1;ctx.stroke();
+      // endpoint dot
+      ctx.beginPath();ctx.arc(x1,y1,2.5,0,Math.PI*2);
+      ctx.fillStyle='rgba(0,212,255,0.6)';ctx.fill();
+    }
+
+    // Draw inverse transform (A⁻¹ vectors)
+    for(let i=0;i<n;i++){
+      const baseAngle=(i/n)*Math.PI*2;
+      const invAngle=baseAngle-t*theta27; // inverse rotation
+      const r2=radius*0.6;
+      const x1=cx+Math.cos(invAngle)*r2;
+      const y1=cy+Math.sin(invAngle)*r2;
+      ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(x1,y1);
+      ctx.strokeStyle=`rgba(240,180,41,0.12)`;ctx.lineWidth=1;ctx.stroke();
+      ctx.beginPath();ctx.arc(x1,y1,2,0,Math.PI*2);
+      ctx.fillStyle='rgba(240,180,41,0.5)';ctx.fill();
+    }
+
+    // Central dot with label
+    const pulse=0.4+0.3*Math.sin(t*2);
+    ctx.beginPath();ctx.arc(cx,cy,6,0,Math.PI*2);
+    const grd=ctx.createRadialGradient(cx,cy,0,cx,cy,6);
+    grd.addColorStop(0,'rgba(240,180,41,0.9)');
+    grd.addColorStop(1,'rgba(240,180,41,0)');
+    ctx.fillStyle=grd;ctx.fill();
+
+    // Ring showing A·A⁻¹=I
+    ctx.beginPath();ctx.arc(cx,cy,radius,0,Math.PI*2);
+    ctx.strokeStyle=`rgba(0,180,230,${0.08+pulse*0.05})`;ctx.lineWidth=1;ctx.stroke();
+
+    ctx.beginPath();ctx.arc(cx,cy,radius*0.6,0,Math.PI*2);
+    ctx.strokeStyle=`rgba(240,180,41,${0.06+pulse*0.04})`;ctx.lineWidth=1;ctx.setLineDash([4,6]);ctx.stroke();ctx.setLineDash([]);
+
+    // Labels
+    ctx.font='9px DM Mono,monospace';
+    ctx.fillStyle='rgba(0,180,230,0.5)';
+    ctx.fillText('A · ℝ⁸',cx-16,cy-radius-8);
+    ctx.fillStyle='rgba(240,180,41,0.4)';
+    ctx.fillText('A⁻¹',cx-12,cy-radius*0.6-8);
+    ctx.fillStyle='rgba(255,255,255,0.3)';
+    ctx.fillText('θ=2π/27',cx-22,cy+16);
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ── LIVE TENSOR VALUES (animated)
+(function(){
+  let t=0;
+  setInterval(()=>{
+    t+=0.05;
+    document.getElementById('lam1').textContent=(0.9272+Math.sin(t)*0.003).toFixed(4);
+    document.getElementById('lam2').textContent=(0.5400+Math.cos(t*1.3)*0.002).toFixed(4);
+    document.getElementById('lam3').textContent=(1.0000+Math.sin(t*.7)*0.0001).toFixed(4);
+    document.getElementById('frob').textContent=(27+Math.sin(t*.4)*.027).toFixed(3);
+    const s=Math.sin(t*.2)>=0?'+':'-';
+    document.getElementById('detA').textContent=s+(1+Math.abs(Math.sin(t*.2))*.001).toFixed(3);
+  },80);
+})();
+
+// ── CHESS BOARD
+(function(){
+  const board=document.getElementById('chessboard');
+  const pieces={
+    '00':'♜','01':'♞','02':'♝','03':'♛','04':'♚','05':'♝','06':'♞','07':'♜',
+    '10':'♟','11':'♟','12':'♟','13':'♟','14':'♟','15':'♟','16':'♟','17':'♟',
+    '60':'♙','61':'♙','62':'♙','63':'♙','64':'♙','65':'♙','66':'♙','67':'♙',
+    '70':'♖','71':'♘','72':'♗','73':'♕','74':'♔','75':'♗','76':'♘','77':'♖',
+    '35':'♙','44':'♟','33':'♗','55':'♝'
+  };
+  const goldSquares=['44','35','33'];
+  const highlightSquares=['43','54'];
+  for(let r=0;r<8;r++){
+    for(let c=0;c<8;c++){
+      const cell=document.createElement('div');
+      const key=`${r}${c}`;
+      cell.className=`cb ${(r+c)%2===0?'light':'dark'}`;
+      if(goldSquares.includes(key))cell.style.background='rgba(240,180,41,.08)';
+      if(highlightSquares.includes(key))cell.classList.add('highlight');
+      if(pieces[key]){
+        const p=document.createElement('span');
+        p.className='piece';
+        const isBlack=r<2;
+        p.style.color=isBlack?'rgba(0,180,230,.8)':'rgba(240,180,41,.9)';
+        p.textContent=pieces[key];
+        cell.appendChild(p);
+      }
+      board.appendChild(cell);
+    }
+  }
+})();
+
+// ── AI STUDIO PROJECTS
+const projects=[
+  {name:'AHT-GATEWAY API',type:'API · Backend',status:'active'},
+  {name:'SINI ORCHESTRATOR v6.0',type:'AI Orchestrator · Core',status:'active'},
+  {name:'Sovereign Sales Agent',type:'AI Agent · Sales',status:'active'},
+  {name:'HEISEN-MATRIX License Engine',type:'License System',status:'active'},
+  {name:'Quantum Loop Interface',type:'UI · Frontend',status:'active'},
+  {name:'Mentes Brillantes AI Brain',type:'AI Orchestrator',status:'active'},
+  {name:'Fusion Token Registry',type:'Blockchain · Registry',status:'active'},
+  {name:'Blueprint Lab Dashboard',type:'Dashboard · UI',status:'active'},
+  {name:'Chess Matrix Strategic View',type:'Visualization',status:'active'},
+  {name:'Anti-Gravity Tower Physics',type:'Simulation · Canvas',status:'build'},
+  {name:'RSA-4096 Certificate Generator',type:'Crypto · Docs',status:'active'},
+  {name:'Sovereign Product Kit v1.0',type:'Product · Sales',status:'active'},
+  {name:'Street Emporio Royal Site',type:'Website · Brand',status:'build'},
+  {name:'AHT SUPREM HYBRID Portal',type:'Portal · Enterprise',status:'build'},
+  {name:'Entropy Braid Analytics',type:'Analytics · BI',status:'build'},
+  {name:'Aether Torus Architecture Tool',type:'Architecture',status:'idea'},
+  {name:'Throne Protocol v3.0',type:'Governance · Legal',status:'active'},
+  {name:'Cryptographic Key Forensics',type:'Security · Crypto',status:'active'},
+  {name:'ISO/IAF Portfolio Manager',type:'Compliance · Docs',status:'build'},
+  {name:'Sovereign Seal Generator',type:'Brand · Design',status:'active'},
+  {name:'Pipeline Core Visualizer',type:'Visualization · Dev',status:'active'},
+  {name:'Master API Dashboard',type:'DevOps · Monitoring',status:'build'},
+  {name:'JWT Auth Engine',type:'Auth · Security',status:'active'},
+  {name:'Command Brain 27 Interface',type:'AI · Command',status:'build'},
+  {name:'Quantum Execution Node',type:'Infrastructure',status:'idea'},
+  {name:'Fusion Core Protocol',type:'Protocol · Core',status:'idea'},
+  {name:'Sovereign Identity Vault',type:'Identity · Security',status:'build'},
+  {name:'Governance Framework UI',type:'Governance · UI',status:'idea'},
+  {name:'Audit Log Explorer',type:'Audit · Analytics',status:'idea'},
+  {name:'Enterprise License Portal',type:'Portal · Licensing',status:'build'},
+  {name:'Sovereign Starter Kit',type:'Product · Onboarding',status:'active'},
+  {name:'Matrix Asset Manager',type:'Asset Management',status:'build'},
+  {name:'AI App Studio Workspace',type:'AI · Development',status:'active'},
+  {name:'Street Royal Commerce',type:'E-Commerce · Sales',status:'idea'},
+  {name:'AHT Token Marketplace',type:'Marketplace · DeFi',status:'idea'},
+  {name:'Sovereign Evidence Vault',type:'Legal · Storage',status:'build'},
+  {name:'Blockchain Hash Verifier',type:'Verification · Tool',status:'active'},
+  {name:'RFC Identity Validator',type:'Identity · Mexico',status:'active'},
+  {name:'Operational Manual Generator',type:'Docs · AI',status:'build'},
+  {name:'Quantum Domain Router',type:'Infrastructure · DNS',status:'idea'},
+  {name:'Alpha High Tech Backend',type:'Backend · Core',status:'active'},
+  {name:'Royal Browser OS',type:'UI · OS Layer',status:'idea'},
+  {name:'Global Finance Link',type:'Fintech · Banking',status:'idea'},
+  {name:'Sovereign CRM',type:'CRM · Sales',status:'build'},
+  {name:'Executive Report Engine',type:'Reporting · AI',status:'build'},
+  {name:'Crypto Governance v1.1',type:'Governance · Crypto',status:'active'},
+  {name:'Inverse Algebra Engine',type:'Math · Core',status:'active'},
+  {name:'SER27 Voice Assistant',type:'Voice · AI',status:'build'},
+  {name:'OSINT-27 Terminal',type:'Intelligence · UI',status:'active'},
+  {name:'FUSION CORE Engine',type:'Core · Reserved',status:'active'},
+];
+
+function renderProjects(f){
+  const grid=document.getElementById('projects-grid');
+  grid.innerHTML='';
+  f.forEach(p=>{
+    const d=document.createElement('div');
+    d.className='proj-card';
+    const colors={active:'var(--green)',build:'var(--amber)',idea:'var(--blue)'};
+    d.innerHTML=`
+      <div class="proj-type">${p.type}</div>
+      <div class="proj-name">${p.name}</div>
+      <div class="proj-status">
+        <div class="ps-dot ${p.status}"></div>
+        <span style="color:${colors[p.status]};font-size:.43rem;text-transform:uppercase;letter-spacing:.08em">${p.status}</span>
+      </div>`;
+    grid.appendChild(d);
+  });
+}
+renderProjects(projects);
+function filterProjects(q){
+  renderProjects(projects.filter(p=>p.name.toLowerCase().includes(q.toLowerCase())||p.type.toLowerCase().includes(q.toLowerCase())));
+}
+function filterByStatus(s,btn){
+  document.querySelectorAll('.flt-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderProjects(s==='all'?projects:projects.filter(p=>p.status===s));
+}
+
+// ── ANTI-GRAVITY TOWER CANVAS
+(function(){
+  const c=document.getElementById('tower-canvas');
+  const ctx=c.getContext('2d');
+  const W=c.width,H=c.height;
+  const cx=W/2;
+  const TIERS=8;
+  const labels=['PERSISTENCE','ANALYTICS','COGNITIVE','EXECUTION','AUTHORITY','IDENTITY','QUANTUM','SOVEREIGN'];
+  const atoms=[];
+
+  for(let t=0;t<TIERS;t++){
+    const y=H-60-t*(H-120)/TIERS;
+    const r=58-t*4;
+    const n=6+t%3;
+    for(let i=0;i<n;i++){
+      const angle=(i/n)*Math.PI*2;
+      atoms.push({
+        x:cx+Math.cos(angle)*r,y,
+        r0:cx+Math.cos(angle)*r,y0:y,
+        angle,tier:t,nodeR:r,totalN:n,i,
+        drift:Math.random()*.4-.2,
+        phase:Math.random()*Math.PI*2
+      });
+    }
+  }
+
+  let frame=0;
+  function draw(){
+    frame++;
+    ctx.clearRect(0,0,W,H);
+
+    // Grid
+    ctx.strokeStyle='rgba(0,180,230,0.05)';ctx.lineWidth=.5;
+    for(let x=0;x<W;x+=20){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke()}
+    for(let y=0;y<H;y+=20){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
+
+    // Ground line
+    ctx.strokeStyle='rgba(0,180,230,.25)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(20,H-20);ctx.lineTo(W-20,H-20);ctx.stroke();
+
+    // Update atoms
+    atoms.forEach(a=>{
+      a.y=a.y0-Math.sin(frame*.015+a.phase)*12;
+      a.x=a.r0+Math.sin(frame*.008+a.drift)*8;
+    });
+
+    // Tier bonds
+    for(let t=0;t<TIERS;t++){
+      const tier=atoms.filter(a=>a.tier===t);
+      for(let i=0;i<tier.length;i++){
+        const b=tier[(i+1)%tier.length];
+        const a=tier[i];
+        ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);
+        ctx.strokeStyle=`rgba(0,180,230,${0.12+t*.02})`;ctx.lineWidth=.8;ctx.stroke();
+      }
+    }
+
+    // Inter-tier bonds
+    for(let t=0;t<TIERS-1;t++){
+      const t1=atoms.filter(a=>a.tier===t);
+      const t2=atoms.filter(a=>a.tier===t+1);
+      const pairs=Math.min(t1.length,t2.length,3);
+      for(let i=0;i<pairs;i++){
+        if(!t1[i]||!t2[i])continue;
+        ctx.beginPath();ctx.moveTo(t1[i].x,t1[i].y);ctx.lineTo(t2[i].x,t2[i].y);
+        ctx.strokeStyle='rgba(240,180,41,0.1)';ctx.lineWidth=.6;ctx.stroke();
+      }
+    }
+
+    // Center axis
+    ctx.beginPath();ctx.moveTo(cx,H-20);ctx.lineTo(cx,28);
+    ctx.strokeStyle='rgba(0,180,230,.18)';ctx.lineWidth=1;ctx.setLineDash([4,6]);ctx.stroke();ctx.setLineDash([]);
+
+    // Atom nodes
+    atoms.forEach(a=>{
+      const grd=ctx.createRadialGradient(a.x,a.y,0,a.x,a.y,4.5);
+      grd.addColorStop(0,'rgba(0,210,255,0.85)');
+      grd.addColorStop(1,'rgba(0,180,230,0)');
+      ctx.beginPath();ctx.arc(a.x,a.y,3,0,Math.PI*2);
+      ctx.fillStyle=grd;ctx.fill();
+      ctx.beginPath();ctx.arc(a.x,a.y,1.5,0,Math.PI*2);
+      ctx.fillStyle='rgba(255,255,255,.75)';ctx.fill();
+    });
+
+    // Energy rings
+    for(let t=0;t<TIERS;t++){
+      const tier=atoms.filter(a=>a.tier===t);
+      if(!tier.length)continue;
+      const yc=tier.reduce((s,a)=>s+a.y,0)/tier.length;
+      const pulse=0.5+Math.sin(frame*.04+t*.5)*.3;
+      ctx.beginPath();ctx.arc(cx,yc,9+t*2,0,Math.PI*2);
+      ctx.strokeStyle=`rgba(240,180,41,${pulse*.07})`;ctx.lineWidth=1;ctx.stroke();
+    }
+
+    // Crown
+    const topY=26+Math.sin(frame*.02)*5;
+    const grd2=ctx.createRadialGradient(cx,topY,0,cx,topY,9);
+    grd2.addColorStop(0,'rgba(240,180,41,1)');
+    grd2.addColorStop(1,'rgba(240,180,41,0)');
+    ctx.beginPath();ctx.arc(cx,topY,9,0,Math.PI*2);
+    ctx.fillStyle=grd2;ctx.fill();
+
+    // Tier labels
+    ctx.font='8px DM Mono,monospace';
+    for(let t=0;t<TIERS;t++){
+      const tier=atoms.filter(a=>a.tier===t);
+      if(tier.length){
+        const yc=tier.reduce((s,a)=>s+a.y,0)/tier.length;
+        ctx.fillStyle='rgba(0,180,230,.4)';
+        ctx.fillText(labels[t]||'',W-112,yc+3);
+        // math annotations
+        const eqs=['SHA256(∞)','−Σp·log(p)','Σλᵢvᵢvᵢᵀ','∫F·dt·27','sign(H,RSA)','x⊕RFC','F⁻¹{Φ(ω)}','∫F·dt→∞'];
+        ctx.fillStyle='rgba(240,180,41,.25)';
+        ctx.fillText(eqs[t]||'',6,yc+3);
+      }
+    }
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
+</body>
+</html>
